@@ -23,7 +23,7 @@ return {
         })
         :find()
     end
-    vim.keymap.set('n', '<C-e>', function()
+    vim.keymap.set('n', '<leader>A', function()
       toggle_telescope(harpoon:list())
     end, { desc = 'Open harpoon window' })
   end,
