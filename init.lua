@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -100,6 +100,7 @@ vim.g.have_nerd_font = false
 
 -- Make line numbers default
 vim.opt.number = true
+vim.opt.relativenumber = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 -- vim.opt.relativenumber = true
@@ -114,13 +115,16 @@ vim.opt.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
-end)
+-- vim.schedule(function()
+--   vim.opt.clipboard = 'unnamedplus'
+-- end)
 
 -- Enable break indent
 vim.opt.breakindent = true
 
+vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
 -- Save undo history
 vim.opt.undofile = true
 
@@ -132,10 +136,12 @@ vim.opt.smartcase = true
 vim.opt.signcolumn = 'yes'
 
 -- Decrease update time
-vim.opt.updatetime = 250
+vim.opt.updatetime = 50
+
+vim.opt.isfname:append '@-@'
 
 -- Decrease mapped sequence wait time
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 200
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -165,7 +171,45 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>tr', vim.cmd.terminal, { desc = 'open terminal' })
+vim.keymap.set('n', '<leader>b', vim.cmd.Ex, { desc = 'Open Neovim explorer (netrw)' })
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move selected line(s) down' })
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move selected line(s) up' })
+vim.keymap.set('n', 'J', 'mzJ`z', { desc = 'Join lines while keeping cursor position' })
+-- next greatest remap ever : asbjornHaland
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = 'Copy to system clipboard' })
+vim.keymap.set('n', '<leader>Y', [["+Y]], { desc = 'Copy line to system clipboard' })
+vim.keymap.set('n', '<leader>v', [["+p]], { desc = 'Paste from system clipboard after cursor' })
+vim.keymap.set('n', '<leader>V', [["+P]], { desc = 'Paste from system clipboard before cursor' })
+vim.keymap.set('n', '<leader><leader>', ':w<CR>', { desc = 'Save current buffer' })
+vim.keymap.set({ 'n', 'v' }, '<leader>d', '"_d', { desc = 'Delete without copying to register' })
+vim.keymap.set('n', 'Q', '<nop>', { desc = 'Disable Ex mode' })
+vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz', { desc = 'Next item in quickfix list (centered)' })
+vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz', { desc = 'Previous item in quickfix list (centered)' })
+vim.keymap.set('n', '<leader>k', '<cmd>lnext<CR>zz', { desc = 'Next item in location list (centered)' })
+vim.keymap.set('n', '<leader>j', '<cmd>lprev<CR>zz', { desc = 'Previous item in location list (centered)' })
+vim.keymap.set('n', '<leader>s', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Search and replace word under cursor' })
 
+local diagnostics_enabled = false
+
+-- Create a persistent autocommand that checks the toggle state
+vim.api.nvim_create_autocmd('CursorHold', {
+  pattern = '*',
+  callback = function()
+    if diagnostics_enabled then
+      vim.diagnostic.open_float(nil, { focus = false })
+    end
+  end,
+})
+
+-- Toggle function
+local function toggle_diagnostics()
+  diagnostics_enabled = not diagnostics_enabled
+  print('Diagnostics: ' .. (diagnostics_enabled and 'ON' or 'OFF'))
+end
+
+-- Keybinding to toggle diagnostics
+vim.keymap.set('n', '<leader>e', toggle_diagnostics, { desc = 'Toggle automatic diagnostics on hover' })
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -421,7 +465,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>bf', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -992,7 +1036,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
