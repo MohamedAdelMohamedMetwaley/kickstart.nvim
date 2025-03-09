@@ -191,7 +191,10 @@ vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz', { desc = 'Next item in quickfix
 vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz', { desc = 'Previous item in quickfix list (centered)' })
 vim.keymap.set('n', '<leader>k', '<cmd>lnext<CR>zz', { desc = 'Next item in location list (centered)' })
 vim.keymap.set('n', '<leader>j', '<cmd>lprev<CR>zz', { desc = 'Previous item in location list (centered)' })
-vim.keymap.set('n', '<leader>s', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Search and replace word under cursor' })
+-- vim.keymap.set('n', '<leader>s', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Search and replace word under cursor' })
+vim.keymap.set('n', '<C-c>', [[:TailwindConcealToggle<CR>]], { desc = 'Toggle tailwind calss conceal' })
+vim.keymap.set('n', '<leader>stc', [[:Telescope tailwind classes<CR>]], { desc = 'List all tailwind classes ' })
+vim.keymap.set('n', '<leader>stu', [[:Telescope tailwind utilities<CR>]], { desc = 'List all tailwind utilities ' })
 
 local diagnostics_enabled = false
 
@@ -861,11 +864,13 @@ require('lazy').setup({
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-nvim-lsp-signature-help',
+      'onsails/lspkind-nvim',
     },
     config = function()
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
+      local lspkind = require 'lspkind'
       luasnip.config.setup {}
 
       cmp.setup {
@@ -938,6 +943,24 @@ require('lazy').setup({
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'nvim_lsp_signature_help' },
+        },
+        formatting = {
+          format = lspkind.cmp_format {
+            mode = 'symbol', -- show only symbol annotations
+            maxwidth = {
+              -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+              -- can also be a function to dynamically calculate max width such as
+              -- menu = function() return math.floor(0.45 * vim.o.columns) end,
+              menu = 50, -- leading text (labelDetails)
+              abbr = 50, -- actual suggestion item
+            },
+            ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+            show_labelDetails = true, -- show labelDetails in menu. Disabled by default
+
+            -- The function below will be called before any actual modifications from lspkind
+            -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
+            before = require('tailwind-tools.cmp').lspkind_format,
+          },
         },
       }
     end,
