@@ -7,7 +7,21 @@ return {
   -- Optional dependency
   dependencies = { 'hrsh7th/nvim-cmp' },
   config = function()
-    require('nvim-autopairs').setup {}
+    require('nvim-autopairs').setup {
+      fast_wrap = {
+        map = '<M-e>', -- Set the keybinding for fast wrap
+        chars = { '{', '[', '(', '"', "'" }, -- Characters to wrap
+        pattern = [=[[%'%"%>%]%)%}%,]]=], -- Pattern to match
+        end_key = '$', -- Key to end the wrapping
+        before_key = 'h', -- Key to move before the cursor
+        after_key = 'l', -- Key to move after the cursor
+        cursor_pos_before = true, -- Cursor position before wrapping
+        keys = 'qwertyuiopzxcvbnmasdfghjkl', -- Keys for wrapping
+        manual_position = true, -- Manual position for wrapping
+        highlight = 'Search', -- Highlight group for wrapping
+        highlight_grey = 'Comment', -- Highlight group for greyed out text
+      },
+    }
     -- If you want to automatically add `(` after selecting a function or method
     local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
     local cmp = require 'cmp'

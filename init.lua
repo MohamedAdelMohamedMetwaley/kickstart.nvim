@@ -152,6 +152,9 @@ vim.opt.splitbelow = true
 --  and `:help 'listchars'`
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -175,7 +178,7 @@ vim.keymap.set('n', '<leader>gs', vim.cmd.Git)
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '<leader>tr', vim.cmd.terminal, { desc = 'open terminal' })
-vim.keymap.set('n', '<leader>b', vim.cmd.Ex, { desc = 'Open Neovim explorer (netrw)' })
+vim.keymap.set('n', '-', vim.cmd.Ex, { desc = 'Open Neovim explorer (netrw)' })
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move selected line(s) down' })
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move selected line(s) up' })
 vim.keymap.set('n', 'J', 'mzJ`z', { desc = 'Join lines while keeping cursor position' })
@@ -184,7 +187,7 @@ vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = 'Copy to system clip
 vim.keymap.set('n', '<leader>Y', [["+Y]], { desc = 'Copy line to system clipboard' })
 vim.keymap.set('n', '<leader>v', [["+p]], { desc = 'Paste from system clipboard after cursor' })
 vim.keymap.set('n', '<leader>V', [["+P]], { desc = 'Paste from system clipboard before cursor' })
-vim.keymap.set('n', '<leader><leader>', ':w<CR>', { desc = 'Save current buffer' })
+vim.keymap.set('n', '<M-s>', ':w<CR>', { desc = 'Save current buffer' })
 vim.keymap.set({ 'n', 'v' }, '<leader>d', '"_d', { desc = 'Delete without copying to register' })
 vim.keymap.set('n', 'Q', ':q', { desc = 'quit vim' })
 vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz', { desc = 'Next item in quickfix list (centered)' })
@@ -979,6 +982,7 @@ require('lazy').setup({
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
+        transparent = true,
       }
 
       -- Load the colorscheme here.
