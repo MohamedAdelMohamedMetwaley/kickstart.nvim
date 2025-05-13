@@ -78,5 +78,12 @@ return {
       end,
       desc = 'harpoon to file 5',
     },
+    {
+      '<A-6>',
+      function()
+        require('harpoon'):list():select(6)
+      end,
+      desc = 'harpoon to file 6',
+    },
   },
 }
